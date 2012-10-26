@@ -38,41 +38,41 @@
 
 + (BlockTextPromptAlertView *)promptWithTitle:(NSString *)title message:(NSString *)message textField:(out UITextField**)textField block:(TextFieldReturnCallBack) block{
     BlockTextPromptAlertView *prompt = [[[BlockTextPromptAlertView alloc] initWithTitle:title message:message defaultText:nil block:block] autorelease];
-    
+
     *textField = prompt.textField;
-    
+
     return prompt;
 }
 
 - (id)initWithTitle:(NSString *)title message:(NSString *)message defaultText:(NSString*)defaultText block: (TextFieldReturnCallBack) block {
-    
+
     self = [super initWithTitle:title message:message];
-    
+
     if (self) {
-        UITextField *theTextField = [[[UITextField alloc] initWithFrame:CGRectMake(kTextBoxHorizontalMargin, _height, _view.bounds.size.width - kTextBoxHorizontalMargin * 2, kTextBoxHeight)] autorelease]; 
-        
+        UITextField *theTextField = [[[UITextField alloc] initWithFrame:CGRectMake(kTextBoxHorizontalMargin, _height, _view.bounds.size.width - kTextBoxHorizontalMargin * 2, kTextBoxHeight)] autorelease];
+
         [theTextField setContentVerticalAlignment:UIControlContentVerticalAlignmentCenter];
         [theTextField setAutocapitalizationType:UITextAutocapitalizationTypeWords];
         [theTextField setBorderStyle:UITextBorderStyleRoundedRect];
-        [theTextField setTextAlignment:UITextAlignmentCenter];
+        [theTextField setTextAlignment:NSTextAlignmentCenter];
         [theTextField setClearButtonMode:UITextFieldViewModeAlways];
-        
+
         if (defaultText)
             theTextField.text = defaultText;
-        
+
         if(block){
             theTextField.delegate = self;
         }
-        
+
         [_view addSubview:theTextField];
-        
+
         self.textField = theTextField;
-        
+
         _height += kTextBoxHeight + kTextBoxSpacing;
-        
+
         self.callBack = block;
     }
-    
+
     return self;
 }
 - (void)show {
@@ -80,38 +80,38 @@
                                              selector:@selector(keyboardWillShow:)
                                                  name:UIKeyboardWillShowNotification
                                                object:nil];
-    
+
     [super show];
-    
+
     [[NSNotificationCenter defaultCenter] addObserver:textField selector:@selector(becomeFirstResponder) name:@"AlertViewFinishedAnimations" object:nil];
 }
 
 - (void)dismissWithClickedButtonIndex:(NSInteger)buttonIndex animated:(BOOL)animated {
     [super dismissWithClickedButtonIndex:buttonIndex animated:animated];
-    
+
     [[NSNotificationCenter defaultCenter] removeObserver:textField];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
 }
 
 - (void)keyboardWillShow:(NSNotification *)notification {
     CGSize keyboardSize = [[[notification userInfo] objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
-    
+
     CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height;
     __block CGRect frame = _view.frame;
-    
+
     if (frame.origin.y + frame.size.height > screenHeight - keyboardSize.height) {
-        
+
         frame.origin.y = screenHeight - keyboardSize.height - frame.size.height;
-        
+
         if (frame.origin.y < 0)
             frame.origin.y = 0;
-        
+
         [UIView animateWithDuration:0.3
                               delay:0.0
                             options:UIViewAnimationCurveEaseOut
                          animations:^{
                              _view.frame = frame;
-                         } 
+                         }
                          completion:nil];
     }
 }
@@ -135,18 +135,18 @@
 }
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
-    
+
     NSUInteger newLength = [self.textField.text length] + [string length] - range.length;
-    
+
     if (maxLength > 0 && newLength > maxLength)
         return NO;
-    
+
     if (!unacceptedInput)
         return YES;
-    
+
     if ([[string componentsSeparatedByCharactersInSet:unacceptedInput] count] > 1)
         return NO;
-    else 
+    else
         return YES;
 }
 
