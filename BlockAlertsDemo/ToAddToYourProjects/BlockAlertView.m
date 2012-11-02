@@ -97,7 +97,7 @@ static UIFont *buttonFont = nil;
             _height += size.height + kAlertViewBorder;
         }
 
-        _vignetteBackground = NO;
+        _vignetteBackground = YES;
     }
 
     return self;
